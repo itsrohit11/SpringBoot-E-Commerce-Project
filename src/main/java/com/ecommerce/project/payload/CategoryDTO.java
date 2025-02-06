@@ -1,5 +1,6 @@
 package com.ecommerce.project.payload;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,6 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CategoryDTO {
-    private Long CategoryID;
-    private String CategoryName;
+
+    private Long categoryID;
+    private String categoryName;
 }
