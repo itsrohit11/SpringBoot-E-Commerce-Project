@@ -10,7 +10,11 @@ import com.ecommerce.project.repositories.CategoryRepository;
 import com.ecommerce.project.repositories.ProductRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 import java.util.List;
 
 
@@ -25,6 +29,12 @@ public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private ModelMapper modelMapper;
+
+    @Autowired
+    private FileService fileService;
+
+    @Value("${project.image}")
+    private String Path;
 
 
     @Override
@@ -103,6 +113,27 @@ public class ProductServiceImpl implements ProductService {
         productRepository.delete(product);
         return modelMapper.map(product, ProductDTO.class);
     }
+
+    @Override
+    public ProductDTO updateProductImage(Long productId, MultipartFile image) throws IOException {
+        //Get product from DB
+        Product productFromDb = productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Product", "productId", productId));
+        //Upload Image to server
+        //Get the file name
+        String path = "image/";
+        String fileName = fileService.uploadImage(path, image);
+        //Update the new file name to product
+        productFromDb.setImage(fileName);
+        //save product
+        Product updatedProduct = productRepository.save(productFromDb);
+        //return DTO after mapping product to DTO
+        return modelMapper.map(updatedProduct, ProductDTO.class);
+
+
+    }
+
+
 
 
 }
