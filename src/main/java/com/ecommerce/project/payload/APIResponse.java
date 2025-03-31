@@ -11,4 +11,3 @@ public class APIResponse {
     public String message;
     private boolean status;
 }
-
