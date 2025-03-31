@@ -6,28 +6,22 @@ import com.ecommerce.project.model.User;
 import com.ecommerce.project.payload.AddressDTO;
 import com.ecommerce.project.repositories.AddressRepository;
 import com.ecommerce.project.repositories.UserRepository;
-import com.ecommerce.project.util.AuthUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 
 @Service
 public class AddressServiceImpl implements AddressService{
-
-
     @Autowired
     private AddressRepository addressRepository;
-
-    @Autowired
-    private UserRepository userRepository;
 
     @Autowired
     private ModelMapper modelMapper;
 
     @Autowired
-    private AuthUtil authUtil;
-
+    UserRepository userRepository;
 
     @Override
     public AddressDTO createAddress(AddressDTO addressDTO, User user) {
@@ -46,7 +40,6 @@ public class AddressServiceImpl implements AddressService{
         return addresses.stream()
                 .map(address -> modelMapper.map(address, AddressDTO.class))
                 .toList();
-
     }
 
     @Override
@@ -54,7 +47,6 @@ public class AddressServiceImpl implements AddressService{
         Address address = addressRepository.findById(addressId)
                 .orElseThrow(() -> new ResourceNotFoundException("Address", "addressId", addressId));
         return modelMapper.map(address, AddressDTO.class);
-
     }
 
     @Override
@@ -63,7 +55,6 @@ public class AddressServiceImpl implements AddressService{
         return addresses.stream()
                 .map(address -> modelMapper.map(address, AddressDTO.class))
                 .toList();
-
     }
 
     @Override
@@ -71,23 +62,21 @@ public class AddressServiceImpl implements AddressService{
         Address addressFromDatabase = addressRepository.findById(addressId)
                 .orElseThrow(() -> new ResourceNotFoundException("Address", "addressId", addressId));
 
-        addressFromDatabase.setStreet(addressDTO.getStreet());
-        addressFromDatabase.setBuildingName(addressDTO.getBuildingName());
         addressFromDatabase.setCity(addressDTO.getCity());
+        addressFromDatabase.setPincode(addressDTO.getPincode());
         addressFromDatabase.setState(addressDTO.getState());
         addressFromDatabase.setCountry(addressDTO.getCountry());
-        addressFromDatabase.setPincode(addressDTO.getPincode());
-
+        addressFromDatabase.setStreet(addressDTO.getStreet());
+        addressFromDatabase.setBuildingName(addressDTO.getBuildingName());
 
         Address updatedAddress = addressRepository.save(addressFromDatabase);
+
         User user = addressFromDatabase.getUser();
         user.getAddresses().removeIf(address -> address.getAddressId().equals(addressId));
         user.getAddresses().add(updatedAddress);
         userRepository.save(user);
 
         return modelMapper.map(updatedAddress, AddressDTO.class);
-
-
     }
 
     @Override
@@ -100,8 +89,7 @@ public class AddressServiceImpl implements AddressService{
         userRepository.save(user);
 
         addressRepository.delete(addressFromDatabase);
-        return "Address with addressId: " +  addressId + "Deleted Successfully";
+
+        return "Address deleted successfully with addressId: " + addressId;
     }
-
-
 }
