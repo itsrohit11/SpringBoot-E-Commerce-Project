@@ -7,11 +7,11 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PaymentDTO {
-    private Long paymentId;
+public class OrderRequestDTO {
+    private Long addressId;
     private String paymentMethod;
+    private String pgName;
     private String pgPaymentId;
     private String pgStatus;
     private String pgResponseMessage;
-    private String pgName;
 }
